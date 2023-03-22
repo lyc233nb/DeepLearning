@@ -2,5 +2,5 @@
 
 ## 😀 深度学习
 
-* [Page 1](README.md)
-  * [Transformer](shen-du-xue-xi/page-1/transformer.md)
+* [Transformer导论](README.md)
+  * [Transformer](shen-du-xue-xi/transformer-dao-lun/transformer.md)
