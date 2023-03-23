@@ -193,6 +193,124 @@ $$
 
 需要注意的是，由于位置编码向量是通过正弦和余弦函数进行计算的，所以在计算中不需要额外的训练，也不需要对每个位置编码向量进行更新。位置编码向量只需要在模型的初始化阶段计算一次，然后在每次输入序列的编码中使用即可。
 
+## Transformer的pytorch实现
+
+首先，我们需要导入所需的库和模块：
+
+```python
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import math
+
+```
+
+然后，我们定义Transformer模型的主要组件，包括编码器、解码器和整个Transformer模型本身。
+
+在编码器和解码器中，我们实现了多头自注意力机制（multi-head self-attention）和前馈神经网络（feed-forward network）这两个核心组件。
+
+在Transformer模型中，我们将编码器和解码器组合在一起，并添加一些额外的组件，如嵌入层（embedding layer）、位置编码器（position encoding）和输出层（output layer）。
+
+```python
+class MultiHeadAttention(nn.Module):
+    def __init__(self, d_model, n_heads):
+        super(MultiHeadAttention, self).__init__()
+        self.d_model = d_model  # 模型的维度
+        self.n_heads = n_heads  # 多头注意力的头数
+        self.d_k = d_model // n_heads  # 每个头的维度，保证能够整除
+        
+        # 创建权重矩阵
+        self.W_Q = nn.Linear(d_model, d_model)  # 查询向量的权重矩阵
+        self.W_K = nn.Linear(d_model, d_model)  # 键向量的权重矩阵
+        self.W_V = nn.Linear(d_model, d_model)  # 值向量的权重矩阵
+        
+        # 最后的线性层
+        self.W_O = nn.Linear(d_model, d_model)  # 输出向量的权重矩阵
+        
+    def forward(self, Q, K, V, mask=None):
+        batch_size = Q.size(0)  # 获取输入数据的批次大小
+        
+        # 通过线性层，分别计算 Q、K、V 的投影向量
+        Q = self.W_Q(Q)
+        K = self.W_K(K)
+        V = self.W_V(V)
+        
+        # 将 Q、K、V 投影向量分裂为多个头
+        Q = Q.view(batch_size, -1, self.n_heads, self.d_k)
+        K = K.view(batch_size, -1, self.n_heads, self.d_k)
+        V = V.view(batch_size, -1, self.n_heads, self.d_k)
+        
+        # 计算注意力得分
+        scores = torch.matmul(Q, K.transpose(-2, -1)) / math.sqrt(self.d_k)
+        
+        # ...
+
+
+```
+
+在`MultiHeadAttention`类中，我们实现了多头自注意力机制，其中包含了以下主要部分：
+
+1. `__init__` 方法：初始化函数，定义了模型的维度、多头注意力的头数、每个头的维度，并创建了权重矩阵（查询、键、值、输出）。
+2. `forward` 方法：前向传播函数，用于计算多头自注意力机制的输出。在此函数中，我们首先通过线性层，将输入的 Q、K、V 分别投影到 d\_model 维度空间上。
+3. 接着，我们将 Q、K、V 投影向量分裂为多个头，以便进行并行计算。
+4. 然后，我们计算注意力得分 scores，通过将 Q 与 K 转置后相乘，再除以 math.sqrt(self.d\_k)。注意力得分用于计算每个值向量的权重，以便对值向量进行加权求和。
+
+在这里，我们只是计算了注意力得分，并没有进行权重的计算。接下来，我们将使用 softmax 函数将注意力得分转换为权重:
+
+```python
+# 对 scores 进行缩放和掩码操作
+if mask is not None:
+mask = mask.unsqueeze(1)
+scores = scores.masked_fill(mask == 0, -1e9)
+
+# 将注意力得分进行 softmax 计算
+    attn_weights = F.softmax(scores, dim=-1)
+    
+    # 将权重与 V 向量相乘
+    attn_output = torch.matmul(attn_weights, V)
+    
+    # 将多头注意力向量拼接在一起
+    attn_output = attn_output.view(batch_size, -1, self.d_model)
+    
+    # 通过最后的线性层，得到最终的多头注意力向量
+    attn_output = self.W_O(attn_output)
+    
+    return attn_output, attn_weights
+class FeedForward(nn.Module):
+def init(self, d_model, d_ff):
+super(FeedForward, self).init()
+ # 创建两个线性层
+    self.linear_1 = nn.Linear(d_model, d_ff)
+    self.linear_2 = nn.Linear(d_ff, d_model)
+    
+def forward(self, x):
+    # 通过 ReLU 激活函数
+    x = F.relu(self.linear_1(x))
+    x = self.linear_2(x)
+    return x
+class EncoderLayer(nn.Module):
+def init(self, d_model, n_heads, d_ff, dropout=0.1):
+super(EncoderLayer, self).init()
+self.multihead_attn = MultiHeadAttention(d_model, n_heads)
+self.ff = FeedForward(d_model, d_ff)
+self.norm1 = nn.LayerNorm(d_model)
+self.norm2 = nn.LayerNorm(d_model)
+self.dropout1 = nn.Dropout(dropout)
+self.dropout2 = nn.Dropout(dropout)
+```
+
+以上的代码是 Transformer 模型的一部分，包括了 MultiHeadAttention、FeedForward 和 EncoderLayer 三个类。下面是代码解释：
+
+* MultiHeadAttention：多头注意力机制，将输入的 Q、K、V 矩阵分别通过线性变换得到 Q、K、V 的查询矩阵、键矩阵和值矩阵，然后计算注意力得分，并通过 softmax 函数将注意力得分转换为权重，最后将权重与 V 向量相乘得到多头注意力向量。
+* FeedForward：前馈神经网络，通过两个线性层和 ReLU 激活函数对输入进行变换。
+* EncoderLayer：编码器层，包括多头注意力机制、前馈神经网络、LayerNormalization 和 Dropout 层，其中 LayerNormalization 是为了减少训练过程中的内部协变量偏移，Dropout 是为了防止过拟合。
+
+这三个类是 Transformer 模型的重要组成部分，可以用于语言建模、机器翻译等任务中。其中 MultiHeadAttention 的思想也被广泛应用于其他领域的深度学习模型中。
+
+
+
+
+
 ## Refernce 引用
 
 1. Vaswani, Ashish et al. “Attention is All you Need.” _ArXiv_ abs/1706.03762 (2017): n. pag.
