@@ -56,7 +56,13 @@ $$
 
 ### 序列自注意力计算的详细过程
 
-在序列自注意力机制中，序列的每个输入元素都可以被视为一个向量。对于每个向量，都可以通过一个矩阵变换来生成三个新向量：查询向量、键向量和值向量。这些新向量可以表示不同的信息，例如查询向量可以表示要查询的内容，键向量可以表示文本中的单词，值向量可以表示单词的嵌入表示。
+在序列自注意力机制中，每个输入元素都可以被视为一个向量。对于每个向量，都可以通过一个矩阵变换来生成三个新向量：查询向量、键向量和值向量。
+
+* 查询向量（query vector）：表示要计算相关度的向量，每个词语都有一个查询向量；
+* 键向量（key vector）：表示被比较的向量，每个词语也有一个键向量；
+* 值向量（value vector）：表示查询向量相关的向量，这里可以理解为一个更深层的表示，每个词语也有一个值向量
+
+
 
 在计算自注意力时，我们首先将查询向量与所有键向量进行点积运算，然后将结果除以一个可学习的缩放因子，得到一组分数。这些分数可以视为查询向量与不同键向量之间的相似度分数，用于衡量它们之间的相关性。接下来，我们可以使用分数对值向量进行加权汇聚，以获得对查询向量的响应表示。
 
@@ -68,13 +74,29 @@ $$
 q_i = W_q x_i, \ k_i = W_k x_i, \ v_i = W_v x_i
 $$
 
-其中 $$W_q, W_k, W_v \in \mathbb{R}^{d \times d}$$ 是可学习的权重矩阵。接下来，我们计算每对查询向量和键向量之间的点积得分，然后对值向量进行加权求和，以得到对查询向量的响应表示：
+其中 $$W_q, W_k, W_v \in \mathbb{R}^{d \times d}$$ 是可学习的权重矩阵。
+
+<figure><img src="../../.gitbook/assets/image (5).png" alt=""><figcaption></figcaption></figure>
+
+
+
+接下来，我们计算每对查询向量和键向量之间的点积得分 $$q_i  k_i$$，
+
+<figure><img src="../../.gitbook/assets/image (12).png" alt=""><figcaption></figcaption></figure>
+
+然后对值向量进行加权求和，以得到对查询向量的响应表示：
 
 $$
 \mathrm{Attention}(Q, K, V) = \mathrm{softmax}(\frac{QK^T}{\sqrt{d}})V
 $$
 
 其中 $$Q = [q_1, q_2, ..., q_n] \in \mathbb{R}^{d \times n}$$ 是查询矩阵， $$K = [k_1, k_2, ..., k_n] \in \mathbb{R}^{d \times n}$$ 是键矩阵，$$V = [v_1, v_2, ..., v_n] \in \mathbb{R}^{d \times n}$$是值矩阵， $$\mathrm{softmax}$$  是对每行进行 softmax 操作， $$\sqrt{d}$$  是缩放因子，用于平衡点积得分的量级。
+
+<figure><img src="../../.gitbook/assets/image (6).png" alt=""><figcaption></figcaption></figure>
+
+<figure><img src="../../.gitbook/assets/image (8).png" alt=""><figcaption></figcaption></figure>
+
+<figure><img src="../../.gitbook/assets/image (2).png" alt=""><figcaption></figcaption></figure>
 
 最终，对于输入序列中的每个元素 $$x_i$$，我们都可以通过自注意力机制它和序列中其他元素的注意力。
 
@@ -86,13 +108,20 @@ $$
 
 总之，多头注意力是一种强大的注意力机制，可以帮助模型更好地理解和表示输入数据。
 
+<figure><img src="../../.gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
+
+\
+
+
+<figure><img src="../../.gitbook/assets/image (4).png" alt=""><figcaption></figcaption></figure>
+
 
 
 ### 多头注意力的计算过程
 
 在多头注意力中，输入序列首先被分成若干个子序列，每个子序列都会经过一个独立的注意力机制来计算其注意力权重。然后，每个子序列的输出向量将被拼接在一起，形成最终的多头注意力输出向量。
 
-<figure><img src="../../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (11).png" alt=""><figcaption></figcaption></figure>
 
 下面是多头注意力的计算过程：
 
@@ -104,25 +133,33 @@ $$
 
 这里 $$W_i^Q \in \mathbb{R}^{d \times d/h}$$、 $$W_i^K \in \mathbb{R}^{d \times d/h}$$ 、 $$W_i^V \in \mathbb{R}^{d \times d/h}$$分别是用于将输入序列 $$X$$ 转换为查询 $$Q_i$$、键 $$K_i$$ 和值 $$V_i$$ 的线性变换矩阵， $$d$$ 是输入序列的维度， $$h$$ 是头的数量。每个头的维度为 $$d/h$$ ，因此每个头可以关注输入序列中的不同部分。
 
-接下来，对于每个头 $$i$$，计算其注意力权重 $$A_i$$，该权重表示该头在输入序列中关注的重要程度。这里采用前面说的点积注意力机制：&#x20;
+接下来，对于每个头 $$i$$，计算其注意力权重 $$Z_i$$，该权重表示该头在输入序列中关注的重要程度。这里采用前面说的点积注意力机制：&#x20;
 
 $$
-A_i = \text{softmax}(\frac{Q_iK_i^T}{\sqrt{d/h}})
+Z_i = \text{softmax}(\frac{Q_iK_i^T}{\sqrt{d/h}})
 $$
 
-$$\sqrt{d/h}$$ 是用于缩放点积的常数，旨在避免点积过大或过小而导致的梯度问题。然后，将注意力权重 $$A_i$$与值 $$V_i$$ 相乘并相加，得到头 $$i$$ 的输出向量 $$O_i$$：&#x20;
+$$\sqrt{d/h}$$ 是用于缩放点积的常数，旨在避免点积过大或过小而导致的梯度问题。
+
+<figure><img src="../../.gitbook/assets/image (7).png" alt=""><figcaption></figcaption></figure>
+
+然后，将注意力权重 $$A_i$$与值 $$V_i$$ 相乘并相加，得到头 $$i$$ 的输出向量 $$O_i$$：&#x20;
 
 $$
-O_i = A_iV_i
+O_i = Z_iV_i
 $$
 
 最后，将所有头的输出向量拼接在一起，得到多头注意力的输出向量 $$O \in \mathbb{R}^{n \times d}$$：&#x20;
 
 $$
-O = \text{Concat}(O_1, O_2, ..., O_h)
+Z = \text{Concat}(O_1, O_2, ..., O_h)
 $$
 
-多头注意力的输出向量 $$O$$ 可以作为下一层模型的输入，例如 Transformer 模型中的前馈神经网络。多头注意力机制可以帮助模型更好地理解序列数据中的信息，从而提高模型的性能。
+多头注意力的输出向量 $$O$$ 可以作为下一层模型的输入，例如 Transformer 模型中的前馈神经网络。
+
+<figure><img src="../../.gitbook/assets/image (13).png" alt=""><figcaption></figcaption></figure>
+
+多头注意力机制可以帮助模型更好地理解序列数据中的信息，从而提高模型的性能。
 
 ## Transformer
 
@@ -132,7 +169,7 @@ Encoder 级包含两个子层：多头自注意力层（Multi-Head Self-Attentio
 
 Transformer 通过自注意力机制实现对序列的编码和解码，使得模型能够更好地捕捉序列中的依赖关系，进而提高自然语言处理等任务的效果。
 
-<figure><img src="../../.gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (3) (1).png" alt=""><figcaption></figcaption></figure>
 
 ### Encoder
 
@@ -156,13 +193,17 @@ Transformer中的Add & Norm是指在每个Multi-Head Attention和Feedforward层�
 
 在Multi-Head Attention和Feedforward层中，模型进行一些线性变换和非线性变换，这些变换可能会导致梯度消失或梯度爆炸问题。为了解决这个问题，Transformer在每个层后添加了一个残差连接（residual connection），将输入和输出相加。在残差连接后，使用Layer Normalization对结果进行规范化。Layer Normalization是一种对数据进行归一化的方法，通过对每个特征维度上的数据进行标准化，使得不同特征维度上的数据具有相同的分布。最后，将归一化的结果与残差连接相加，得到该层的最终输出。
 
+<figure><img src="../../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+
 Add & Norm技术能够有效地减轻梯度消失和梯度爆炸问题，同时也有助于加速模型的收敛速度。
 
 ### Decoder
 
 在Transformer模型中，outputs（shifted right）指的是模型输出序列中每个时间步的预测值，但是这些预测值与真实输出序列相比，都向右移动了一个时间步，因为这个序列需要先进入encoder。这种右移操作通常称为“右移一位”或“shifted right”。这种右移操作可以使得decoder的输入序列与encoder的输入序列相同。
 
+<figure><img src="../../.gitbook/assets/transformer_decoding_1.gif" alt=""><figcaption></figcaption></figure>
 
+<figure><img src="../../.gitbook/assets/transformer_decoding_2.gif" alt=""><figcaption></figcaption></figure>
 
 ### Masked Mult-Head Attention
 
@@ -184,7 +225,9 @@ $$
 
 其中， $$PE_{pos, i}$$ 表示位置编码矩阵中位置 $$pos$$上的第 $$i$$ 维元素， $$d_{\text{model}}$$ 是词向量和位置编码向量的维度， $$pos$$  是当前位置的索引。公式中的 $$sin$$ 和 $$cos$$$ 函数分别代表正弦函数和余弦函数。它们能够给每个位置编码向量赋予一个独特的模式，从而区分不同位置的输入。在计算中，位置编码向量会被加到对应的词向量中，从而产生最终的输入向量。
 
-需要注意的是，由于位置编码向量是通过正弦和余弦函数进行计算的，所以在计算中不需要额外的训练，也不需要对每个位置编码向量进行更新。位置编码向量只需要在模型的初始化阶段计算一次，然后在每次输入序列的编码中使用即可。
+需要注意的是，由于位置编码向量是通过正弦和余弦函数进行计算的，所以在计算中不需要额外的训练，也不需要对每个位置编码向量进行更新。位置编码向量只需要在模型的初始化阶段计算一次，然后在每次输入序列的编码中使用即可。下面我们用一个动画演示一下这个过程：
+
+<figure><img src="../../.gitbook/assets/transform20fps.gif" alt=""><figcaption></figcaption></figure>
 
 ## Transformer的pytorch实现
 
