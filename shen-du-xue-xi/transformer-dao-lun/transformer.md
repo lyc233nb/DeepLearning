@@ -193,7 +193,7 @@ Transformer中的Add & Norm是指在每个Multi-Head Attention和Feedforward层�
 
 在Multi-Head Attention和Feedforward层中，模型进行一些线性变换和非线性变换，这些变换可能会导致梯度消失或梯度爆炸问题。为了解决这个问题，Transformer在每个层后添加了一个残差连接（residual connection），将输入和输出相加。在残差连接后，使用Layer Normalization对结果进行规范化。Layer Normalization是一种对数据进行归一化的方法，通过对每个特征维度上的数据进行标准化，使得不同特征维度上的数据具有相同的分布。最后，将归一化的结果与残差连接相加，得到该层的最终输出。
 
-<figure><img src="../../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
 
 Add & Norm技术能够有效地减轻梯度消失和梯度爆炸问题，同时也有助于加速模型的收敛速度。
 
@@ -214,6 +214,8 @@ Decoder的第一个子层是一个“masked”多头自注意力层，这意味�
 这种未来信息泄露会导致模型在生成输出时产生错误，因为模型会过度依赖未来信息，而忽略当前位置及之前的信息，从而导致模型对输入的理解出现偏差，输出的结果也就不准确了。
 
 因此，为了避免这种情况，解码器中使用“masked”多头自注意力层来限制只使用当前位置及其之前的信息进行计算，保证每个位置的输出只受前面位置的影响，从而避免了未来信息的泄露。
+
+<figure><img src="../../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
 
 ### 位置编码
 
