@@ -199,7 +199,7 @@ Add & Norm技术能够有效地减轻梯度消失和梯度爆炸问题，同时�
 
 ### Decoder
 
-在Transformer模型中，outputs（shifted right）指的是模型输出序列中每个时间步的预测值，但是这些预测值与真实输出序列相比，都向右移动了一个时间步，因为这个序列需要先进入encoder。这种右移操作通常称为“右移一位”或“shifted right”。这种右移操作可以使得decoder的输入序列与encoder的输入序列相同。
+在Transformer模型中，outputs（shifted right）指的是模型输出序列中每个时间步的预测值，但是这些预测值与真实输出序列相比，都向右移动了一个时间步，因为这个序列需要先进入encoder。这种右移操作通常称为“右移一位”或“shifted right”。这种右移操作可以使得decoder的输入序列与encoder的输入序列相同。Decoder的作用是将编码器产生的上下文向量（context vector）与目标序列中的单词一起，逐个地生成输出序列，将编码器的输出转化为人类可读的形式。
 
 <figure><img src="../../.gitbook/assets/transformer_decoding_1.gif" alt=""><figcaption></figcaption></figure>
 
