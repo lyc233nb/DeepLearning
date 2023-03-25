@@ -30,7 +30,7 @@ Patch Embedding的作用是将图像转换为一系列可处理的向量，以�
 
 Swin Transformer Block的原理基于自注意力机制（Self-Attention Mechanism），其思想是将输入序列中的每个元素都看作是查询（query）、键（key）和值（value），通过计算它们之间的相似度得到注意力分布，然后根据注意力分布加权求和得到输出。Swin Transformer Block的关键之处在于采用了分层式的自注意力机制，通过不同的层次分别处理不同的特征。 具体来说，Swin Transformer Block包含四个子模块：多头注意力模块、全连接层（Feed-Forward）、跨窗口的路径（Shifted Window Path）、层归一化（Layer Normalization）。其中多头注意力模块用于在不同的窗口中学习不同的特征，全连接层用于增强模型的非线性能力，跨窗口的路径模块用于促进不同特征的交互，层归一化模块用于加速模型的训练收敛和提高模型的泛化能力。
 
-<figure><img src="../../.gitbook/assets/image (1) (2).png" alt=""><figcaption><p>Swin Transformer Blockd的结构示意图 LN代表Layer Normalization MSA代表了上一节所说的多头自注意力</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (1) (2) (1).png" alt=""><figcaption><p>Swin Transformer Blockd的结构示意图 LN代表Layer Normalization MSA代表了上一节所说的多头自注意力</p></figcaption></figure>
 
 #### 跨窗口的自注意力（Shifted Window Self-Attention）
 

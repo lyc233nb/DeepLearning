@@ -1,6 +1,6 @@
-# 😀 Bert
+# Bert
 
-BERT，全称为“Bidirectional Encoder Representations from Transformers”，是一种预训练语言表示的方法，意味着我们在一个大型文本语料库（如维基百科）上训练一个通用的“语言理解”模型，然后将该模型用于我们关心的下游NLP任务（如问答）。BERT的表现优于之前的传统NLP方法，因为它是第一个用于预训练NLP的无监督的、深度双向系统。
+上一次我们讲了一种语言模型的训练方法：GPT，现在我们讲述另一种训练方法，BERT。它的全称为“Bidirectional Encoder Representations from Transformers”，是一种预训练语言表示的方法，意味着我们在一个大型文本语料库（如维基百科）上训练一个通用的“语言理解”模型，然后将该模型用于我们关心的下游NLP任务（如问答）。BERT的表现优于之前的传统NLP方法，因为它是第一个用于预训练NLP的无监督的、深度双向系统。
 
 Bert是用无标签的方式建模的。当谈到NLP语料库中的无标签和有标签数据时，一个常见的例子是将文本分类任务。下面是一个例子：
 
@@ -8,13 +8,15 @@ Bert是用无标签的方式建模的。当谈到NLP语料库中的无标签和�
 
 有标签数据：例如 IMDB 电影评论数据集，其中每个评论都被标记为正面或负面情感。这些数据可以用来训练文本分类器，使其能够自动对新的评论进行情感分类。
 
-Bert的无监督预训练方法非常重要，因为它允许我们在大规模文本语料库中进行训练，而无需为每个具体的NLP任务收集大量的有标签数据。由于网络上有大量的无标签文本数据，这种方法使得BERT可以利用这些数据来训练模型，提高模型在各种任务上的表现。与此同时，无监督预训练还能够提高模型对于语言的理解和表达能力。BERT的无监督预训练方法使得我们可以使用一个通用的"语言理解"模型，用于各种NLP任务，如问答、文本分类、实体识别等，而无需为每个任务重新训练一个新的模型。
+Bert的无监督预训练方法非常重要，因为它允许我们在大规模文本语料库中进行训练，而无需为每个具体的NLP任务收集大量的有标签数据。由于网络上有大量的无标签文本数据，这种方法使得BERT可以利用这些数据来训练模型，提高模型在各种任务上的表现。与此同时，无监督预训练还能够提高模型对于语言的理解和表达能力。BERT的无监督预训练方法使得我们可以使用一个通用的"语言理解"模型，用于各种NLP任务，如问答、文本分类、实体识别等，而无需为每个任务重新训练一个新的模型。BERT 的主要任务是通过训练模型来预测文本序列中缺失的单词，因此模型只需要对输入的文本序列进行编码，而不需要对序列进行解码。
+
+<figure><img src="../../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
 
 ## Pre-training BERT
 
-Pre-training BERT（Bidirectional Encoder Representations from Transformers）是一种基于大规模无标注文本数据的预训练方法，目的是为了训练出一个通用的语言模型，能够理解上下文语境中词语的语义信息。
+Pre-training BERT（Bidirectional Encoder Representations from Transformers）是一种基于大规模无标注文本数据的预训练方法，它是Bert中的一个阶段，目的是为了训练出一个通用的语言模型，能够理解上下文语境中词语的语义信息。
 
-在BERT的预训练过程中，使用了两个阶段的训练方式：Masked LM和Next Sentence Prediction。
+在BERT的预训练过程中，使用了两个阶段的训练方式：Masked LM和Next Sentence Prediction，这两个任务都是在编码器的基础上进行的。
 
 （1）Masked LM（MLM）
 
@@ -32,6 +34,8 @@ Next Sentence Prediction (NSP) 是 BERT 中的另外一种预训练任务，用�
 
 NSP 的训练过程中，对于每一对输入的句子，有一半是相邻的，另一半是随机选择的不相邻的句子。模型需要对这两种情况进行分类预测。这个任务主要是为了帮助模型学习更好的语义表示，尤其是对于需要理解多个句子之间关系的任务，如问答和文本推理。
 
+<figure><img src="../../.gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
+
 输入的文本会被分成多个token，每个token会被映射为一个向量表示，这个向量表示就被称为token embedding。
 
 除了token embedding之外，BERT还有另外两种embedding，分别是sentence embedding和positional embedding。
@@ -42,7 +46,7 @@ Positional embedding则是用来表示每个token在句子中的位置信息。�
 
 <figure><img src="../../.gitbook/assets/0m_kXt3uqZH9e7H4w.png" alt=""><figcaption></figcaption></figure>
 
-在BERT中，这三种embedding会被拼接在一起，然后送入Transformer进行编码。
+在BERT中，这三种embedding会被拼接在一起，然后送入Transformer进行编码。这些编码代表了符号句子位置的特征。
 
 通过使用 MLM 和 NSP 两个任务来预训练模型，BERT 能够学习到更加丰富的语言表示，这些表示可以在各种 NLP 任务中进行微调。
 
@@ -56,6 +60,8 @@ Fine-tuning BERT的主要步骤如下：
 2. 定义任务：根据任务类型，选择适当的BERT模型和Fine-tuning策略。对于分类任务，可以使用BERT的CLS向量来表示整个句子，并通过添加一个全连接层来预测标签。对于序列标注任务，可以在BERT的基础上添加一个序列标注层。
 3. Fine-tuning：将准备好的数据集输入BERT模型进行Fine-tuning。在Fine-tuning过程中，对BERT模型的参数进行微调，以适应特定的NLP任务。通常使用反向传播算法进行模型优化。
 4. 模型评估：使用验证集评估Fine-tuning后的模型性能，可以根据验证集的性能调整Fine-tuning策略或BERT模型的超参数。最终，使用测试集评估模型的性能。
+
+<figure><img src="../../.gitbook/assets/image (5).png" alt=""><figcaption><p>不同任务的微调</p></figcaption></figure>
 
 需要注意的是，Fine-tuning BERT需要大量的计算资源和时间，因为BERT模型本身具有非常多的参数和复杂的结构。此外，Fine-tuning BERT的性能还取决于任务的复杂性、数据集的质量和模型的选择等因素。
 

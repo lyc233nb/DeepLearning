@@ -76,7 +76,7 @@ $$
 
 其中 $$W_q, W_k, W_v \in \mathbb{R}^{d \times d}$$ 是可学习的权重矩阵。
 
-<figure><img src="../../.gitbook/assets/image (5).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (5) (1).png" alt=""><figcaption></figcaption></figure>
 
 
 
@@ -108,7 +108,7 @@ $$
 
 总之，多头注意力是一种强大的注意力机制，可以帮助模型更好地理解和表示输入数据。
 
-<figure><img src="../../.gitbook/assets/image (3).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (3) (2).png" alt=""><figcaption></figcaption></figure>
 
 \
 
@@ -121,7 +121,7 @@ $$
 
 在多头注意力中，输入序列首先被分成若干个子序列，每个子序列都会经过一个独立的注意力机制来计算其注意力权重。然后，每个子序列的输出向量将被拼接在一起，形成最终的多头注意力输出向量。
 
-<figure><img src="../../.gitbook/assets/image (11).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (11) (1).png" alt=""><figcaption></figcaption></figure>
 
 下面是多头注意力的计算过程：
 
@@ -227,7 +227,7 @@ $$
 
 其中， $$PE_{pos, i}$$ 表示位置编码矩阵中位置 $$pos$$上的第 $$i$$ 维元素， $$d_{\text{model}}$$ 是词向量和位置编码向量的维度， $$pos$$  是当前位置的索引。公式中的 $$sin$$ 和 $$cos$$$ 函数分别代表正弦函数和余弦函数。它们能够给每个位置编码向量赋予一个独特的模式，从而区分不同位置的输入。在计算中，位置编码向量会被加到对应的词向量中，从而产生最终的输入向量。下面我们用一张图来直观感受一下这些模式。在下面的图中，每一行对应一个向量的位置编码。因此，第一行将是我们要添加到输入序列中第一个单词的嵌入中的向量。每行包含$$512$$个值 - 每个值的取值范围在$$1$$到$$-1$$之间。我们已经用彩色编码来使模式可见。
 
-<figure><img src="../../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (1) (2).png" alt=""><figcaption></figcaption></figure>
 
 需要注意的是，由于位置编码向量是通过正弦和余弦函数进行计算的，所以在计算中不需要额外的训练，也不需要对每个位置编码向量进行更新。位置编码向量只需要在模型的初始化阶段计算一次，然后在每次输入序列的编码中使用即可。
 

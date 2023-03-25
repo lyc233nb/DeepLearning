@@ -22,7 +22,7 @@ $$\log p(x_i|\theta)=\sum_{t=1}^{T_i}\log p(w_{i,t}|w_{i,<t},\theta)$$
 
 其中， $$p(w_{i,t}|w_{i, <t},\theta)$$表示给定上文 $$w_{i, <t}$$的情况下，模型对于 $$w_{i,t}$$的条件概率分布。这种基于自回归的方法使得GPT 只需要一个 decoder，它就可以根据前面已经生成的单词来预测下一个单词，生成整个语言模型。这一点和Bert就是不同的，Bert采用的是encoder架构。
 
-<figure><img src="../../.gitbook/assets/image.png" alt=""><figcaption><p>不同尺寸的GPT</p></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (11).png" alt=""><figcaption><p>不同尺寸的GPT</p></figcaption></figure>
 
 在GPT2，GPT3中在预训练阶段还引入了掩码语言模型（MLM，Masked Language Model，和Bert中的一样）
 
