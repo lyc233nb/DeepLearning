@@ -5,5 +5,5 @@
 * [Transformer导论](README.md)
   * [Transformer](shen-du-xue-xi/transformer-dao-lun/transformer.md)
   * [GPT](shen-du-xue-xi/transformer-dao-lun/gpt.md)
-  * [😀 Bert](shen-du-xue-xi/transformer-dao-lun/bert.md)
+  * [Bert](shen-du-xue-xi/transformer-dao-lun/bert.md)
   * [😀 Swin Transformer](shen-du-xue-xi/transformer-dao-lun/swin-transformer.md)
