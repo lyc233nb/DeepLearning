@@ -215,7 +215,7 @@ Decoder的第一个子层是一个“masked”多头自注意力层，这意味�
 
 因此，为了避免这种情况，解码器中使用“masked”多头自注意力层来限制只使用当前位置及其之前的信息进行计算，保证每个位置的输出只受前面位置的影响，从而避免了未来信息的泄露。
 
-<figure><img src="../../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (1) (4).png" alt=""><figcaption></figcaption></figure>
 
 ### 位置编码
 
@@ -227,7 +227,7 @@ $$
 
 其中， $$PE_{pos, i}$$ 表示位置编码矩阵中位置 $$pos$$上的第 $$i$$ 维元素， $$d_{\text{model}}$$ 是词向量和位置编码向量的维度， $$pos$$  是当前位置的索引。公式中的 $$sin$$ 和 $$cos$$$ 函数分别代表正弦函数和余弦函数。它们能够给每个位置编码向量赋予一个独特的模式，从而区分不同位置的输入。在计算中，位置编码向量会被加到对应的词向量中，从而产生最终的输入向量。下面我们用一张图来直观感受一下这些模式。在下面的图中，每一行对应一个向量的位置编码。因此，第一行将是我们要添加到输入序列中第一个单词的嵌入中的向量。每行包含$$512$$个值 - 每个值的取值范围在$$1$$到$$-1$$之间。我们已经用彩色编码来使模式可见。
 
-<figure><img src="../../.gitbook/assets/image.png" alt=""><figcaption></figcaption></figure>
+<figure><img src="../../.gitbook/assets/image (1).png" alt=""><figcaption></figcaption></figure>
 
 需要注意的是，由于位置编码向量是通过正弦和余弦函数进行计算的，所以在计算中不需要额外的训练，也不需要对每个位置编码向量进行更新。位置编码向量只需要在模型的初始化阶段计算一次，然后在每次输入序列的编码中使用即可。
 
