@@ -56,7 +56,7 @@ $$
 \mathrm{Attention}(Q, K, V) = \mathrm{softmax}(\frac{QK^T}{\sqrt{d}})V
 $$
 
-其中 $$Q = [q_1, q_2, ..., q_n] \in \mathbb{R}^{d \times n}$$ 是查询矩阵， $$K = [k_1, k_2, ..., k_n] \in \mathbb{R}^{d \times n}$$ 是键矩阵，$$V = [v_1, v_2, ..., v_n] \in \mathbb{R}^{d \times n}$$是值矩阵， $$\mathrm{softmax}$$  是对每行进行 softmax 操作， $$\sqrt{d}$$  是缩放因子，用于平衡点积得分的量级。
+其中 $$Q = [q_1, q_2, ..., q_n] \in \mathbb{R}^{d \times n}$$ 是查询矩阵， $$K = [k_1, k_2, ..., k_n] \in \mathbb{R}^{d \times n}$$ 是键矩阵，$$V = [v_1, v_2, ..., v_n] \in \mathbb{R}^{d \times n}$$是值矩阵， $$\mathrm{softmax}$$  是对每行进行 softmax 操作， $$\sqrt{d}$$  是缩放因子，用于平衡点积得分的量级，使得梯度更加稳定。
 
 <figure><img src="../../.gitbook/assets/image (6).png" alt=""><figcaption></figcaption></figure>
 
@@ -71,9 +71,6 @@ $$
 在序列模型里，输入序列被多次计算序列的自注意力，每次的计算都叫做一个头，每个头部可以关注序列中的不同部分，并计算出一个对每个位置的表示。然后，这些表示被合并成一个整体表示，以便于后续的模型处理。就像有多个人的大脑头部去关注不同的信息。
 
 多头注意力是一种强大的注意力机制，可以帮助模型更好地理解和表示输入数据。
-
-\
-
 
 
 
